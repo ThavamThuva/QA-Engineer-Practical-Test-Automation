@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Suite]" guice-stage="DEVELOPMENT">
+  <test thread-count="5" name="Test(failed)">
+    <classes>
+      <class name="testCases.TC003_ClothingItemFromTheGearSectionAndAddThemToTheCartTest">
+        <methods>
+          <include name="validate_that_the_item_has_successfully_been_added_to_the_cart"/>
+          <include name="tearDown"/>
+          <include name="setup"/>
+        </methods>
+      </class> <!-- testCases.TC003_ClothingItemFromTheGearSectionAndAddThemToTheCartTest -->
+      <class name="testCases.TC001_UsersAreAbleToSearchForAnItemUsingTheSearchBarTest">
+        <methods>
+          <include name="tearDown"/>
+          <include name="validate_that_the_results_returned_matches_the_search_term"/>
+          <include name="setup"/>
+        </methods>
+      </class> <!-- testCases.TC001_UsersAreAbleToSearchForAnItemUsingTheSearchBarTest -->
+    </classes>
+  </test> <!-- Test(failed) -->
+</suite> <!-- Failed suite [Suite] -->

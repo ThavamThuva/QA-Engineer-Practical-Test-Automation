@@ -1,0 +1,338 @@
+{
+	"info": {
+		"_postman_id": "ee97b4a0-6b9f-4355-85ba-eb2e35edf9aa",
+		"name": "CreateBooking API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20086878",
+		"_collection_link": "https://www.postman.com/thavamthuva/workspace/my-workspace/collection/20086878-ee97b4a0-6b9f-4355-85ba-eb2e35edf9aa?action=share&source=collection_link&creator=20086878"
+	},
+	"item": [
+		{
+			"name": "Positive Test Cases",
+			"item": [
+				{
+					"name": "Create Booking with Valid Request",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has booking ID\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('bookingid');",
+									"});",
+									"",
+									"pm.test(\"Response matches input data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.booking.firstname).to.eql(\"John\");",
+									"    pm.expect(jsonData.booking.lastname).to.eql(\"Doe\");",
+									"    pm.expect(jsonData.booking.totalprice).to.eql(120);",
+									"    pm.expect(jsonData.booking.depositpaid).to.eql(true);",
+									"    pm.expect(jsonData.booking.bookingdates.checkin).to.eql(\"2023-01-01\");",
+									"    pm.expect(jsonData.booking.bookingdates.checkout).to.eql(\"2023-01-05\");",
+									"    pm.expect(jsonData.booking.additionalneeds).to.eql(\"Breakfast\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"John\",\n    \"lastname\": \"Doe\",\n    \"totalprice\": 120,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2023-01-01\",\n        \"checkout\": \"2023-01-05\"\n    },\n    \"additionalneeds\": \"Breakfast\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking without additionalneeds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has bookingid\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property(\"bookingid\");",
+									"});",
+									"",
+									"pm.test(\"Response has booking details\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.booking.firstname).to.eql(\"Jim\");",
+									"    pm.expect(jsonData.booking.lastname).to.eql(\"Brown\");",
+									"    pm.expect(jsonData.booking.totalprice).to.eql(111);",
+									"    pm.expect(jsonData.booking.depositpaid).to.eql(true);",
+									"    pm.expect(jsonData.booking.bookingdates.checkin).to.eql(\"2018-01-01\");",
+									"    pm.expect(jsonData.booking.bookingdates.checkout).to.eql(\"2019-01-01\");",
+									"    pm.expect(jsonData.booking).to.not.have.property(\"additionalneeds\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Jim\",\n    \"lastname\": \"Brown\",\n    \"totalprice\": 111,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2018-01-01\",\n        \"checkout\": \"2019-01-01\"\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Negative Test Cases",
+			"item": [
+				{
+					"name": "Crete Booking with Missing firstname",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 500\", function () {",
+									"    pm.response.to.have.status(500);",
+									"});",
+									"",
+									"pm.test(\"Response body contains error message\", function () {",
+									"    var responseBody = pm.response.text();",
+									"    pm.expect(responseBody).to.include(\"Internal Server Error\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lastname\": \"Brown\",\n    \"totalprice\": 111,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2018-01-01\",\n        \"checkout\": \"2019-01-01\"\n    },\n    \"additionalneeds\": \"Breakfast\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crete Booking with Missing lastname",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 500\", function () {",
+									"    pm.response.to.have.status(500);",
+									"});",
+									"",
+									"pm.test(\"Response body contains error message\", function () {",
+									"    var responseBody = pm.response.text();",
+									"    pm.expect(responseBody).to.include(\"Internal Server Error\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Jim\",\n    \"totalprice\": 111,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2018-01-01\",\n        \"checkout\": \"2019-01-01\"\n    },\n    \"additionalneeds\": \"Breakfast\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crete Booking with Invalid totalprice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has booking ID\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('bookingid');",
+									"});",
+									"",
+									"pm.test(\"Response matches input data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.booking.totalprice).to.eql(null);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Jim\",\n    \"lastname\": \"Brown\",\n    \"totalprice\": \"one hundred\",\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2018-01-01\",\n        \"checkout\": \"2019-01-01\"\n    },\n    \"additionalneeds\": \"Breakfast\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crete Booking with Invalid date format in bookingdates",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has booking ID\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('bookingid');",
+									"});",
+									"",
+									"pm.test(\"Response matches input data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.booking.bookingdates.checkin).to.eql(\"2023-01-01\");",
+									"    pm.expect(jsonData.booking.bookingdates.checkout).to.eql(\"2023-05-01\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Jim\",\n    \"lastname\": \"Brown\",\n    \"totalprice\": 111,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"01-01-2023\",\n        \"checkout\": \"05-01-2023\"\n    },\n    \"additionalneeds\": \"Breakfast\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
